@@ -25,6 +25,13 @@ def user_input_features():
     features = pd.DataFrame(data, index=[0])
     return features
 
+# Add a title and description
+st.title('Iris Flower Classifier')
+st.write("""
+    This app classifies Iris flowers based on user input features. 
+    Adjust the sliders to input the sepal and petal dimensions, and see the classification result.
+""")
+
 # Get user input
 df = user_input_features()
 
@@ -38,7 +45,22 @@ prediction_proba = clf.predict_proba(df)
 
 # Display the prediction and corresponding probability
 st.subheader('Prediction')
-st.write(iris.target_names[prediction][0])
+st.write(f'The model predicts the flower is of type: **{iris.target_names[prediction][0]}**')
 
 st.subheader('Prediction Probability')
 st.write(pd.DataFrame(prediction_proba, columns=iris.target_names))
+
+# Optional: Add feature importance visualization
+import matplotlib.pyplot as plt
+
+st.subheader('Feature Importance')
+feature_names = iris.feature_names
+importances = clf.feature_importances_
+indices = importances.argsort()
+
+plt.figure()
+plt.title("Feature importances")
+plt.barh(range(len(indices)), importances[indices], align="center")
+plt.yticks(range(len(indices)), [feature_names[i] for i in indices])
+plt.xlabel("Feature importance")
+st.pyplot(plt)
